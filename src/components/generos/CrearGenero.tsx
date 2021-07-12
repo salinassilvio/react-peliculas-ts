@@ -11,13 +11,13 @@ export default function CrearGenero() {
 
       <Formik
         initialValues={{
-          nombre: "Accion",
+          nombre: '',
         }}
         onSubmit={(values) => {
           console.log(values);
         }}
         validationSchema={Yup.object({
-          nombre: Yup.string().required("Este campo es requerido"),
+          nombre: Yup.string().required("Este campo es requerido").primeraLetraMayuscula()
         })}
       >
         <Form>
