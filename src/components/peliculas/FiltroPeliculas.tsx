@@ -1,5 +1,5 @@
 import { Field, Form, Formik } from "formik";
-import { generoDTO } from "../../models/generos.model.dt";
+import { generoDTO } from "../../models/generos.model";
 import Button from "../utils/Button";
 
 export default function FiltroPeliculas() {

@@ -1,7 +1,7 @@
 import { Form, Formik, FormikHelpers } from "formik";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
-import { generoCreacionDTO } from "../../models/generos.model.dt";
+import { generoCreacionDTO } from "../../models/generos.model";
 import Button from "../utils/Button";
 import FormGroupText from "../utils/FormGroupText";
 
