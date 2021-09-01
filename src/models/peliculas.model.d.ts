@@ -12,6 +12,7 @@ export interface peliculaCreacionDTO{
     poster?: File;
     posterURL?: string;
     generosIds?: number[];
+    cineIds?: number[];
 }
 
 
