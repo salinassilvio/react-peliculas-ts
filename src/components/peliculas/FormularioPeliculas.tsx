@@ -12,6 +12,8 @@ import { generoDTO } from "../../models/generos.model";
 import { useState } from "react";
 import { cineDTO } from "../../models/cines.model";
 import TypeAheadActores from "../actores/TypeAheadActores";
+import { actorPeliculaDTO } from "../../models/actores.model";
+import { serialize } from "v8";
 
 export default function FormularioPeliculas(props: formularioPeliculasProps){
     const [generosSeleccionados,setGenerosSeleccionados] =  useState(mapear(props.generosSeleccionados));
@@ -19,6 +21,7 @@ export default function FormularioPeliculas(props: formularioPeliculasProps){
     const [cinesSeleccionados,setCinesSeleccionados] = useState(mapear(props.cinesSeleccionado));
     const [cinesNoSeleccionados,setCinesNoSeleccionados] = useState(mapear(props.cinesNoSeleccionado));
 
+    const [actoresSeleccionados,setActoresSeleccionados] = useState<actorPeliculaDTO[]>([])
 
     function mapear(arreglo:{id:number,nombre:string}[]): selectorMultipleModel[]{
         return arreglo.map(valor => {
@@ -65,7 +68,28 @@ export default function FormularioPeliculas(props: formularioPeliculasProps){
                     </div>
                     <div className="form-group">
                             <TypeAheadActores
-                                actores={[]}
+                                onAdd={actores =>{
+                                    setActoresSeleccionados(actores);
+                                }}
+                                onRemove={actor => {
+                                    const actores = actoresSeleccionados.filter(x => x !== actor);
+                                    setActoresSeleccionados(actores);
+                                }}
+                                actores={actoresSeleccionados}
+                                listadoUI={(actor: actorPeliculaDTO) =>
+                                    <>
+                                        {actor.nombre} / <input placeholder="Personaje" 
+                                        type="text" 
+                                        onChange={ e => {
+                                            const indice = actoresSeleccionados
+                                            .findIndex(x => x.id === actor.id);
+
+                                            const actores = [...actoresSeleccionados];
+                                            actores[indice].personaje = e.currentTarget.value;
+                                            setActoresSeleccionados(actores)
+                                        }}/>
+                                    </>
+                                }
                             ></TypeAheadActores>
                     </div>
                     <Button disabled={formikProps.isSubmitting} type="submit">Enviar</Button>
