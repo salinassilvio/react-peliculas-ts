@@ -15,8 +15,8 @@ export default  function IndiceGeneros(){
 
     return (
         <>
-            <h3>Indice Generos</h3>
-            <Link to="generos/crear">Crear Genero</Link>
+            <h3>Generos</h3>
+            <Link className="btn btn-primary" to="generos/crear">Crear Genero</Link>
         </>
     )
 }
