@@ -6,6 +6,7 @@ import Button from "../utils/Button";
 import { urlGeneros } from "../utils/endpoint";
 import ListadoGenerico from "../utils/ListadoGenerico";
 import Paginacion from "../utils/Paginacion";
+import con
 
 export default function IndiceGeneros() {
   const [generos, setGeneros] = useState<generoDTO[]>();
@@ -14,23 +15,32 @@ export default function IndiceGeneros() {
   const [pagina, setPagina] = useState(1);
 
   useEffect(() => {
+    cargarDatos();
+  }, [pagina, recordsPorPagina]);
+
+  function cargarDatos() {
     axios
       .get(urlGeneros, {
         params: { pagina, recordsPorPagina },
       })
       .then((respuesta: AxiosResponse<generoDTO[]>) => {
-        console.log(respuesta.headers["cantidadtotalregistro"]);
         const totalDeRegistros = parseInt(
           respuesta.headers["cantidadtotalregistro"],
           10
         );
-        console.error(["AQUI", totalDeRegistros]);
-
         setTotalDePaginas(Math.ceil(totalDeRegistros / recordsPorPagina));
-        console.log(respuesta.data);
         setGeneros(respuesta.data);
       });
-  }, [pagina, recordsPorPagina]);
+  }
+
+  async function borrar(id: number) {
+    try {
+      await axios.delete(`${urlGeneros}/${id}`);
+      cargarDatos();
+    } catch (error) {
+      console.log(error.response.data);
+    }
+  }
 
   return (
     <>
@@ -74,10 +84,18 @@ export default function IndiceGeneros() {
             {generos?.map((genero) => (
               <tr key={genero.id}>
                 <td>
-                  <Link className="btn btn-success" to={`/genero/${genero.id}`}>
+                  <Link
+                    className="btn btn-success"
+                    to={`/generos/editar/${genero.id}`}
+                  >
                     Editar
                   </Link>
-                  <Button className="btn btn-danger">Borrar</Button>
+                  <Button
+                    onClick={() => borrar(genero.id)}
+                    className="btn btn-danger"
+                  >
+                    Borrar
+                  </Button>
                 </td>
                 <td>{genero.nombre}</td>
               </tr>
