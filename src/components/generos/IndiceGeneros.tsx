@@ -1,12 +1,12 @@
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { generoCreacionDTO, generoDTO } from "../../models/generos.model";
+import { generoDTO } from "../../models/generos.model";
 import Button from "../utils/Button";
 import { urlGeneros } from "../utils/endpoint";
 import ListadoGenerico from "../utils/ListadoGenerico";
 import Paginacion from "../utils/Paginacion";
-import con
+import confirmar from "../utils/Confirmar";
 
 export default function IndiceGeneros() {
   const [generos, setGeneros] = useState<generoDTO[]>();
@@ -91,7 +91,7 @@ export default function IndiceGeneros() {
                     Editar
                   </Link>
                   <Button
-                    onClick={() => borrar(genero.id)}
+                    onClick={() => confirmar(() => borrar(genero.id))}
                     className="btn btn-danger"
                   >
                     Borrar
