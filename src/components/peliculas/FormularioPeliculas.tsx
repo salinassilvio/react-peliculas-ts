@@ -14,6 +14,7 @@ import { cineDTO } from "../../models/cines.model";
 import TypeAheadActores from "../actores/TypeAheadActores";
 import { actorPeliculaDTO } from "../../models/actores.model";
 import { serialize } from "v8";
+import FormGroupMarkdown from "../utils/FormGroupMarkdowm";
 
 export default function FormularioPeliculas(props: formularioPeliculasProps){
     const [generosSeleccionados,setGenerosSeleccionados] =  useState(mapear(props.generosSeleccionados));
@@ -21,7 +22,8 @@ export default function FormularioPeliculas(props: formularioPeliculasProps){
     const [cinesSeleccionados,setCinesSeleccionados] = useState(mapear(props.cinesSeleccionado));
     const [cinesNoSeleccionados,setCinesNoSeleccionados] = useState(mapear(props.cinesNoSeleccionado));
 
-    const [actoresSeleccionados,setActoresSeleccionados] = useState<actorPeliculaDTO[]>([])
+    const [actoresSeleccionados,setActoresSeleccionados] = 
+    useState<actorPeliculaDTO[]>(props.actoresSeleccionados)
 
     function mapear(arreglo:{id:number,nombre:string}[]): selectorMultipleModel[]{
         return arreglo.map(valor => {
@@ -35,6 +37,7 @@ export default function FormularioPeliculas(props: formularioPeliculasProps){
             onSubmit={(valores,acciones) => {
                 valores.generosIds = generosSeleccionados.map(valor => valor.llave);
                 valores.cineIds = cinesSeleccionados.map(valor => valor.llave);
+                valores.actores = actoresSeleccionados;
                 props.onSubmit(valores,acciones);
             }}
             validationSchema={Yup.object({
@@ -48,6 +51,7 @@ export default function FormularioPeliculas(props: formularioPeliculasProps){
                     <FormGroupText label="Trailer" campo="trailer" />
                     <FormGroupFecha campo="fechaLanzamiento" label="Fecha Lanzamiento"/>
                     <FormGroupImagen campo="poster" label="Poster" imagenURL={props.modelo.posterURL}/>
+                    <FormGroupMarkdown campo="resumen" label="Resumen"></FormGroupMarkdown>
                     <div className="form-group">
                         <label>Géneros:</label>
                         <SelectorMultiple seleccionados={generosSeleccionados} noSeleccionados={generosNoSeleccionados} 
@@ -107,4 +111,5 @@ interface formularioPeliculasProps{
     generosNoSeleccionados: generoDTO[];
     cinesSeleccionado: cineDTO[];
     cinesNoSeleccionado: cineDTO[];
+    actoresSeleccionados: actorPeliculaDTO[];
 }

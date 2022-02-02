@@ -1,3 +1,4 @@
+import { actorPeliculaDTO } from "../../models/actores.model";
 import { cineDTO } from "../../models/cines.model";
 import { generoDTO } from "../../models/generos.model";
 import FormularioPeliculas from "./FormularioPeliculas";
@@ -13,10 +14,19 @@ export default function EditarPeliculas(){
     const cinesSeleccionados: cineDTO[] = [{id: 1, nombre:'Cinemark'}]
 
     const cinesNoSeleccionados: cineDTO[] = [{id:2, nombre:'Cinemas'}]
+    
+    //Actores
+    const actoresSeleccionados: actorPeliculaDTO[] = [
+        {
+            id: 1, nombre: 'Felipe', personaje: '', foto: ''
+        }
+    ]
+
     return(
         <>
             <h3>Editar Peliculas</h3>
             <FormularioPeliculas 
+                actoresSeleccionados={actoresSeleccionados}
                 cinesNoSeleccionado={cinesNoSeleccionados}
                 cinesSeleccionado ={cinesSeleccionados}
                 generosNoSeleccionados={generosNoSeleccionados}

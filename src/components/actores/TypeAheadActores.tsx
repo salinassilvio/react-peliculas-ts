@@ -1,31 +1,67 @@
+import axios, { AxiosResponse } from "axios";
 import { listenerCount } from "process";
-import { Typeahead } from "react-bootstrap-typeahead";
+import { useState } from "react";
+import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import { ReactElement } from "react-markdown/lib/react-markdown";
 import { actorPeliculaDTO } from "../../models/actores.model";
+import { urlActores } from "../utils/endpoint";
 
 export default function TypeAheadActores(props: typeAheadActoresProps){
     
-    const actores: actorPeliculaDTO[] = [
-        { id: 1, nombre:'Silvio', personaje:'',foto:'https://m.media-amazon.com/images/M/MV5BMjExOTY3NzExM15BMl5BanBnXkFtZTgwOTg1OTAzMTE@._V1_UX214_CR0,0,214,317_AL_.jpg' },
-        { id: 2, nombre:'Jose', personaje:'',foto:'https://m.media-amazon.com/images/M/MV5BODJlNWQ4ZjUtYjRhNi00NGQ1LWE3YTItYjRmZGI3YzI4YTEyXkEyXkFqcGdeQXVyMTA2MDIzMDE5._V1_UY317_CR130,0,214,317_AL_.jpg' },
-        { id: 3, nombre:'Logan', personaje:'',foto:'https://m.media-amazon.com/images/M/MV5BNDExMzIzNjk3Nl5BMl5BanBnXkFtZTcwOTE4NDU5OA@@._V1_UX214_CR0,0,214,317_AL_.jpg' }   
-    ]
-
+    const [estaCargando,setEstaCargando] =useState(false);
+    const [opciones,setOpciones] = useState<actorPeliculaDTO[]>([]);
     const seleccion : actorPeliculaDTO[] = []
+
+    const [elementoArrastrado, setElementoArrastrado] = 
+    useState<actorPeliculaDTO | undefined>(undefined)
+
+    function manejarBusqueda(query: string){
+        debugger;
+        axios.get(`${urlActores}/buscarPorNombre/${query}`)
+        .then((respuesta: AxiosResponse<actorPeliculaDTO[]>) => {
+            setOpciones(respuesta.data);
+            setEstaCargando(false);
+        })
+    }
+
+
+    function manejarDragStart(actor: actorPeliculaDTO) 
+    {
+        setElementoArrastrado(actor);
+    }
+
+    function manejarDragOver(actor:actorPeliculaDTO) {
+        if(!elementoArrastrado){
+            return;
+        }
+        if(actor.id !== elementoArrastrado.id){
+            const elementoArrastradoIndice = 
+                    props.actores.findIndex(x => x.id === elementoArrastrado.id);
+            const actorIndice = 
+                    props.actores.findIndex(x => x.id === actor.id);    
+                    //clonar actores 
+             const actores = [...props.actores];
+             actores[actorIndice] = elementoArrastrado; 
+             actores[elementoArrastradoIndice] = actor;
+             props.onAdd(actores);
+        }
+    }
 
     return (
         <>
             <label>Actores</label>
-            <Typeahead
+            <AsyncTypeahead
                 id="typeahead"
                 onChange={actores => {
                     if(props.actores.findIndex(x => x.id === actores[0].id) === -1){
                         props.onAdd([...props.actores,actores[0]]);
                     }
                 }}
-                options={actores}
+                options={opciones}
                 labelKey={actor => actor.nombre}
-                filterBy={['nombre']}
+                filterBy={() => true}
+                isLoading={estaCargando}
+                onSearch={manejarBusqueda}
                 placeholder="Escriba el nombre del actor..."
                 minLength={2}
                 flip={true}
@@ -44,9 +80,12 @@ export default function TypeAheadActores(props: typeAheadActoresProps){
                         </>
                     )
                 }
-            ></Typeahead>
+            ></AsyncTypeahead>
             <ul className="list-group">
                 {props.actores.map(actor => <li 
+                draggable={true}
+                onDragStart={() => manejarDragStart(actor)}
+                onDragOver={() => manejarDragOver(actor)}
                 className="list-group-item list-group-item-action"
                 key={actor.id}>
                     {props.listadoUI(actor)}
